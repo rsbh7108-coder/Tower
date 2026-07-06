@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>蓮花塔一對式客製化選購</title>
+<style>
+:root {
+  --bg:#f7f0e6; --card:#fffaf3; --ink:#2f271f; --muted:#766858;
+  --gold:#b98534; --line:#eadfcc; --soft:#fff6e6; --danger:#9c4f36;
+  --shadow:0 14px 38px rgba(71,51,29,.14); --radius:22px;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(228,197,138,.32), transparent 28%),
+    linear-gradient(135deg,#fcfaf5 0%,#efe4d4 100%);
+}
+header { text-align:center; padding:26px 18px 10px; }
+.eyebrow {
+  display:inline-flex; padding:6px 14px; border-radius:999px;
+  border:1px solid rgba(185,133,52,.32); background:rgba(255,250,243,.78);
+  color:#80612f; letter-spacing:.08em; font-size:14px;
+}
+h1 { margin:14px 0 8px; font-size:clamp(26px,4vw,42px); }
+.sub { max-width:900px; margin:0 auto; color:var(--muted); line-height:1.7; }
+main {
+  width:min(1220px, calc(100% - 28px)); margin:18px auto 46px;
+  display:grid; grid-template-columns:1.08fr .92fr; gap:22px; align-items:start;
+}
+.card {
+  background:rgba(255,250,243,.94); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+}
+.preview-card { padding:22px; position:sticky; top:16px; }
+.preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.preview-head h2, .controls h2 { margin:0; font-size:20px; }
+.badge {
+  color:#765425; background:linear-gradient(180deg,#fff7df,#f1dfb8);
+  border:1px solid rgba(185,137,59,.34); padding:7px 12px;
+  border-radius:999px; font-size:13px; white-space:nowrap;
+}
+.stage {
+  position:relative; min-height:720px; border-radius:20px; overflow:hidden;
+  display:flex; justify-content:center; align-items:flex-end; padding:34px 12px 20px;
+  border:1px solid rgba(232,218,196,.95);
+  background:
+    radial-gradient(ellipse at center 78%, rgba(185,137,59,.18), transparent 56%),
+    linear-gradient(180deg, rgba(255,255,255,.92), rgba(239,226,207,.72));
+}
+.pair {
+  width:100%; display:flex; justify-content:center; align-items:flex-end;
+  gap:clamp(8px,2vw,26px); z-index:1;
+}
+.tower {
+  position:relative; width:min(42%,270px); height:670px;
+  display:flex; justify-content:center; align-items:flex-end;
+  filter:drop-shadow(0 18px 18px rgba(60,42,22,.18));
+}
+.tower img { position:absolute; object-fit:contain; user-select:none; pointer-events:none; }
+.base-img {
+  /* 底座寬度與高度可調：width 控寬，scaleY 只拉高/壓低高度，不改寬 */
+  bottom:0;
+  width:82%;
+  max-height:64%;
+  transform:scaleY(var(--base-h, 1));
+  transform-origin:bottom center;
+  z-index:1;
+}
+.top-img {
+  /*
+    上方造型調整區：
+    --join：數字越大，造型越往上；數字越小，造型越往下
+    --overlap：數字越大，造型越往下；數字越小或負值，造型越往上
+    --scale：造型整體比例，0.8 = 80%
+  */
+  bottom:var(--join, 47%);
+  width:90%;
+  max-height:var(--top-max-h, 68%);
+  transform:translateY(var(--overlap, 3%)) scale(var(--scale,0.8));
+  transform-origin:bottom center;
+  z-index:2;
+}
+.controls { padding:22px; }
+.section { margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
+.section:first-of-type { border-top:0; padding-top:0; }
+.section h3 { margin:0 0 12px; font-size:16px; display:flex; align-items:center; gap:8px; }
+.section h3 span {
+  width:25px; height:25px; border-radius:50%; display:inline-grid; place-items:center;
+  background:#ead8b3; color:#6e4d1f; font-size:13px;
+}
+.option-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.option {
+  border:1px solid var(--line); background:#fffdf8; border-radius:16px; padding:10px;
+  cursor:pointer; display:flex; gap:10px; align-items:center; transition:.18s ease;
+  text-align:left; min-height:82px;
+}
+.option:hover { transform:translateY(-1px); border-color:rgba(185,133,52,.55); }
+.option.active { border-color:var(--gold); box-shadow:0 0 0 3px rgba(185,133,52,.16); background:#fff8e9; }
+.thumb {
+  width:58px; height:58px; border-radius:12px; background:#f3eadb;
+  display:grid; place-items:center; overflow:hidden; flex:0 0 auto;
+}
+.thumb img { max-width:100%; max-height:100%; object-fit:contain; }
+.option strong { display:block; font-size:15px; margin-bottom:4px; }
+.option small { display:block; color:var(--muted); line-height:1.35; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field.full { grid-column:1 / -1; }
+label { font-size:14px; color:#6f604f; font-weight:650; }
+input, textarea, select {
+  width:100%; border:1px solid #e4d7c4; background:#fffdf8; color:var(--ink);
+  border-radius:14px; padding:12px 13px; font-size:15px; outline:none;
+}
+textarea { min-height:78px; resize:vertical; }
+input:focus, textarea:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(185,133,52,.14); }
+.summary {
+  margin-top:12px; padding:14px; border-radius:16px; line-height:1.75;
+  color:#5f5142; font-size:14px; background:rgba(255,255,255,.68);
+  border:1px dashed rgba(185,133,52,.42);
+}
+.actions { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+button.primary, button.secondary {
+  appearance:none; border:0; border-radius:14px; padding:12px 16px;
+  font-weight:750; cursor:pointer; font-size:15px;
+}
+button.primary { background:linear-gradient(180deg,#c99b4a,#a8792d); color:white; }
+button.secondary { border:1px solid #dfcfb8; background:#fffdf8; color:#70552e; }
+.note { margin-top:12px; color:var(--muted); font-size:13px; line-height:1.6; }
+.toast {
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
+  opacity:0; pointer-events:none; background:#302820; color:white; padding:11px 16px;
+  border-radius:999px; box-shadow:0 12px 28px rgba(0,0,0,.2); transition:.2s ease; z-index:30;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+@media (max-width:920px) {
+  main { grid-template-columns:1fr; }
+  .preview-card { position:relative; top:auto; }
+  .stage { min-height:610px; }
+
+  /*
+    平板版修正：
+    原本手機/平板的 tower 高度變短，但 .top-img 還沿用電腦版比例，
+    視覺上會看起來往下掉，所以這裡單獨把造型往上補。
+  */
+  .tower {
+    height:560px;
+    width:min(44%,230px);
+    --join:50%;
+    --overlap:0%;
+    --scale:0.8;
+  }
+}
+@media (max-width:560px) {
+  main { width:min(100% - 18px,1220px); }
+  .preview-card,.controls { padding:14px; }
+  .preview-head { align-items:flex-start; flex-direction:column; }
+  .badge { white-space:normal; }
+  .stage { min-height:500px; padding-inline:6px; }
+
+  /*
+    手機版修正：
+    手機畫面更窄，造型會更容易視覺下沉，
+    所以 --join 再提高、--overlap 改成負值，讓上方造型穩定往上。
+  */
+  .tower {
+    height:460px;
+    width:48%;
+    --join:40%;
+    --overlap:-12%;
+    --scale:0.8;
+  }
+
+  .pair { gap:4px; }
+  .option-grid,.form-grid { grid-template-columns:1fr; }
+  .field.full { grid-column:auto; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">一對式蓮花塔｜即時搭配預覽</div>
+  <h1>殯葬蓮花塔客製化選購</h1>
+  <p class="sub">選擇下方底座與上方造型後，系統會自動產生左右各一座。正式圖片已做基本去背處理，方便測試圖層疊合效果。</p>
+</header>
+
+<main>
+<section class="card preview-card">
+  <div class="preview-head">
+    <h2>搭配預覽</h2>
+    <div class="badge">左右各 1，共 1 對</div>
+  </div>
+  <div class="stage">
+    <div class="pair">
+      <div class="tower">
+        <img class="base-img" id="baseLeft" alt="左側底座">
+        <img class="top-img" id="topLeft" alt="左側造型">
+      </div>
+      <div class="tower">
+        <img class="base-img" id="baseRight" alt="右側底座">
+        <img class="top-img" id="topRight" alt="右側造型">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card controls">
+  <h2>選購設定</h2>
+  <div class="section">
+    <h3><span>1</span>選擇底座樣式</h3>
+    <div class="option-grid" id="baseOptions"></div>
+  </div>
+  <div class="section">
+    <h3><span>2</span>選擇上方造型</h3>
+    <div class="option-grid" id="topOptions"></div>
+  </div>
+  <div class="section">
+    <h3><span>3</span>訂購資料</h3>
+    <div class="form-grid">
+      <div class="field">
+        <label for="buyer">訂購人</label>
+        <input id="buyer" placeholder="請輸入姓名">
+      </div>
+      <div class="field">
+        <label for="phone">電話</label>
+        <input id="phone" placeholder="請輸入聯絡電話" inputmode="tel">
+      </div>
+      <div class="field">
+        <label for="deliveryDate">配送日期</label>
+        <input id="deliveryDate" type="date">
+      </div>
+      <div class="field">
+        <label for="deliveryTime">配送時段</label>
+        <select id="deliveryTime">
+          <option value="">請選擇</option>
+          <option>上午</option>
+          <option>下午</option>
+          <option>晚上</option>
+          <option>不指定</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="address">配送地址</label>
+        <textarea id="address" placeholder="請輸入完整配送地址"></textarea>
+      </div>
+      <div class="field full">
+        <label for="remark">備註</label>
+        <textarea id="remark" placeholder="例如：告別式場地、收件窗口、特殊需求等"></textarea>
+      </div>
+    </div>
+    <div class="summary" id="summary"></div>
+    <div class="actions">
+      <button class="primary" id="copyBtn" type="button">複製訂購內容</button>
+      <button class="secondary" id="resetFormBtn" type="button">清空表單</button>
+      <button class="secondary" id="resetAllBtn" type="button">重設全部</button>
+    </div>
+    <div class="note">※ 可直接用瀏覽器開啟 index.html 測試。若要正式上線，下一步可串 Google Sheets 或後台資料庫。</div>
+  </div>
+</section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const baseList = [
+  {
+    "id": "base-01",
+    "name": "淡色六角底座",
+    "img": "assets/base-01.png",
+    "desc": "淡金白色經文款"
+  },
+  {
+    "id": "base-02",
+    "name": "深色六角底座",
+    "img": "assets/base-02.png",
+    "desc": "黑金佛像經文款",
+    "baseH": 1.15
+  },
+  {
+    "id": "base-03",
+    "name": "牌樓底座",
+    "img": "assets/base-03.png",
+    "desc": "紅金牌樓造型",
+    "baseH": 1.10    
+  },
+  {
+    "id": "base-04",
+    "name": "平安米底座",
+    "img": "assets/base-04.png",
+    "desc": "平安米箱造型",
+    "baseH": 1.25    
+  }
+];
+const topList = [
+  {
+    "id": "top-01",
+    "name": "蓮花塔",
+    "img": "assets/top-01.png",
+    "desc": "傳統蓮花塔"
+  },
+  {
+    "id": "top-02",
+    "name": "金磚塔",
+    "img": "assets/top-02.png",
+    "desc": "金銀磚塔型"
+  },
+  {
+    "id": "top-03",
+    "name": "保鏢蓮花塔",
+    "img": "assets/top-03.png",
+    "desc": "保鏢造型蓮花塔"
+  },
+  {
+    "id": "top-04",
+    "name": "淨蓮靈獅塔",
+    "img": "assets/top-04.png",
+    "desc": "白灰靈獅造型"
+  },
+  {
+    "id": "top-05",
+    "name": "孝獅塔",
+    "img": "assets/top-05.png",
+    "desc": "孝獅護主造型"
+  },
+  {
+    "id": "top-06",
+    "name": "盤龍護主塔",
+    "img": "assets/top-06.png",
+    "desc": "盤龍護靈造型"
+  }
+];
+
+const defaults = { baseId:"base-01", topId:"top-01" };
+let state = {
+  base: baseList.find(x => x.id === defaults.baseId),
+  top: topList.find(x => x.id === defaults.topId)
+};
+
+const $ = id => document.getElementById(id);
+
+function renderOptions(list, wrapId, type) {
+  const wrap = $(wrapId);
+  wrap.innerHTML = "";
+  list.forEach(item => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "option" + (state[type].id === item.id ? " active" : "");
+    btn.dataset.id = item.id;
+    btn.innerHTML = `
+      <span class="thumb"><img src="${item.img}" alt=""></span>
+      <span><strong>${item.name}</strong><small>${item.desc}</small></span>
+    `;
+    btn.addEventListener("click", () => {
+      state[type] = item;
+      updatePreview();
+      renderAllOptions();
+      updateSummary();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderAllOptions() {
+  renderOptions(baseList, "baseOptions", "base");
+  renderOptions(topList, "topOptions", "top");
+}
+
+function updatePreview() {
+  ["Left","Right"].forEach(side => {
+    const tower = $("base" + side).closest(".tower");
+    tower.style.setProperty("--base-h", state.base.baseH || 1);
+    $("base" + side).src = state.base.img;
+    $("top" + side).src = state.top.img;
+  });
+}
+
+function getFormValue(id, fallback) {
+  const el = $(id);
+  return el && el.value.trim() ? el.value.trim() : fallback;
+}
+
+function updateSummary() {
+  $("summary").innerHTML = `
+    <strong>訂購摘要</strong><br>
+    底座：${state.base.name}<br>
+    上方造型：${state.top.name}<br>
+    數量：左右各 1，共 1 對<br>
+    訂購人：${getFormValue("buyer","未填")}｜電話：${getFormValue("phone","未填")}<br>
+    配送日期：${getFormValue("deliveryDate","未選擇")}｜配送時段：${getFormValue("deliveryTime","未指定")}<br>
+    配送地址：${getFormValue("address","未填")}<br>
+    備註：${getFormValue("remark","無")}
+  `;
+}
+
+function getOrderText() {
+  return [
+    "【蓮花塔訂購內容】",
+    `底座：${state.base.name}`,
+    `上方造型：${state.top.name}`,
+    "數量：左右各 1，共 1 對",
+    `訂購人：${getFormValue("buyer","")}`,
+    `電話：${getFormValue("phone","")}`,
+    `配送日期：${getFormValue("deliveryDate","")}`,
+    `配送時段：${getFormValue("deliveryTime","")}`,
+    `配送地址：${getFormValue("address","")}`,
+    `備註：${getFormValue("remark","")}`
+  ].join("\n");
+}
+
+function showToast(msg) {
+  const toast = $("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1600);
+}
+
+function clearForm() {
+  ["buyer","phone","deliveryDate","deliveryTime","address","remark"].forEach(id => {
+    const el = $(id);
+    if (el) el.value = "";
+  });
+  updateSummary();
+}
+
+function resetAll() {
+  state.base = baseList.find(x => x.id === defaults.baseId);
+  state.top = topList.find(x => x.id === defaults.topId);
+  clearForm();
+  renderAllOptions();
+  updatePreview();
+  updateSummary();
+}
+
+$("copyBtn").addEventListener("click", async () => {
+  const text = getOrderText();
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("已複製訂購內容");
+  } catch (err) {
+    // file:// 有時不能使用 clipboard API，改用彈窗讓使用者手動複製
+    window.prompt("請手動複製以下內容", text);
+  }
+});
+
+$("resetFormBtn").addEventListener("click", () => {
+  clearForm();
+  showToast("已清空表單");
+});
+
+$("resetAllBtn").addEventListener("click", () => {
+  resetAll();
+  showToast("已重設全部");
+});
+
+["buyer","phone","deliveryDate","deliveryTime","address","remark"].forEach(id => {
+  const el = $(id);
+  el.addEventListener("input", updateSummary);
+  el.addEventListener("change", updateSummary);
+});
+
+const today = new Date();
+$("deliveryDate").min = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+
+renderAllOptions();
+updatePreview();
+updateSummary();
+</script>
+</body>
+</html>
